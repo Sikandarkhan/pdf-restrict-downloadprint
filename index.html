@@ -1,0 +1,87 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Restricted PDF Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #pdfViewer {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="pdfViewer" src="https://www.africau.edu/images/default/sample.pdf"></iframe>
+
+    <script>
+        // Disable right-click on the iframe
+        document.getElementById('pdfViewer').oncontextmenu = function () {
+            return false;
+        };
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Display PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+  <style>
+    /* Style the canvas */
+    #pdfViewer {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas to display the PDF -->
+  <canvas id="pdfViewer"></canvas>
+
+  <script>
+    // PDF.js worker URL
+    const pdfjsWorkerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+    // Path to your PDF file
+    const pdfFile = 'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
+
+    // Initialize PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc;
+
+    // Fetch the PDF document
+    const loadingTask = pdfjsLib.getDocument(pdfFile);
+
+    loadingTask.promise.then((pdf) => {
+      // Fetch the first page
+      pdf.getPage(1).then((page) => {
+        const scale = 1.5;
+        const viewport = page.getViewport({ scale });
+
+        // Prepare canvas using PDF page dimensions
+        const canvas = document.getElementById('pdfViewer');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Render PDF page into canvas context
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+        page.render(renderContext);
+      });
+    }).catch((error) => {
+      console.error('Error occurred while loading PDF:', error);
+    });
+
+    // Disable right-click on the canvas (to make it less convenient for users to save)
+    document.getElementById('pdfViewer').addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>
